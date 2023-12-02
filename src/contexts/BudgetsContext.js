@@ -32,7 +32,7 @@ export const BudgetsProvider = ({ children }) => {
       return [...prevExpenses, newExpense];
     });
   }
-  
+
   function addBudget({ name, max }) {
     const newBudget = {
       id: uuidV4(),
@@ -65,21 +65,26 @@ export const BudgetsProvider = ({ children }) => {
     return setExpenses(expenses.filter((exp) => exp.id !== expId));
   }
 
-  function editBudget({budgetId, newName, newMax}) {
+  function editBudget({ budgetId, newName, newMax }) {
     setBudgets((prevBudgets) => {
       return prevBudgets.map((budget) => {
-        if (budget.id !== budgetId) return budget
-        return { ...budget, name: newName, max: newMax};
-      })
+        if (budget.id !== budgetId) return budget;
+        return { ...budget, name: newName, max: newMax };
+      });
     });
   }
 
-  function editExpense({expenseId, newName, newAmount}) {
+  function editExpense({ expenseId, newName, newAmount, newBudgetId }) {
     setExpenses((prevExpenses) => {
       return prevExpenses.map((exp) => {
-        if (exp.id !== expenseId) return exp
-        return { ...exp, description: newName, amount: newAmount};
-      })
+        if (exp.id !== expenseId) return exp;
+        return {
+          id: exp.id,
+          budgetId: newBudgetId,
+          amount: newAmount,
+          description: newName,
+        };
+      });
     });
   }
 

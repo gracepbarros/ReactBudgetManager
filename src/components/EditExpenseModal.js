@@ -1,20 +1,26 @@
 import { useRef } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
-import { useBudgets } from "../contexts/BudgetsContext";
+import {
+  useBudgets,
+  UNCATEGORIZED_BUDGET_ID,
+} from "../contexts/BudgetsContext";
 
 export default function EditExpenseModal({ expenseId, show, handleClose }) {
   const nameRef = useRef();
   const amountRef = useRef();
-  const { editExpense, expenses } = useBudgets();
+  const budgetIdRef = useRef();
+  const { editExpense, expenses, budgets } = useBudgets();
 
   const actualExpense = expenses.filter((exp) => exp.id === expenseId);
 
   function handleSubmit(e) {
     e.preventDefault();
+    console.log(budgetIdRef.current.value);
     editExpense({
       expenseId: expenseId,
       newName: nameRef.current.value,
       newAmount: parseFloat(amountRef.current.value),
+      newBudgetId: budgetIdRef.current.value,
     });
     handleClose();
   }
@@ -50,6 +56,26 @@ export default function EditExpenseModal({ expenseId, show, handleClose }) {
               }
             ></Form.Control>
           </Form.Group>
+
+          <Form.Group className="mb-3" controlId="budgetId">
+            <Form.Label>Budget</Form.Label>
+            <Form.Select
+              defaultValue={
+                actualExpense.length !== 0
+                  ? actualExpense[0].budgetId
+                  : UNCATEGORIZED_BUDGET_ID
+              }
+              ref={budgetIdRef}
+            >
+              <option id={UNCATEGORIZED_BUDGET_ID}>Uncategorized</option>
+              {budgets.map((budget) => (
+                <option key={budget.id} value={budget.id}>
+                  {budget.name}
+                </option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+
           <div className="d-flex justify-content-end">
             <Button type="submit" variant="primary">
               Finish Edition
